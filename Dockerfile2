@@ -1,0 +1,29 @@
+# Étape 1: Build
+FROM node:16-alpine AS build
+
+# Répertoire
+WORKDIR /app
+
+# Copier les fichiers
+COPY package*.json ./
+
+# Installer les dépendances (build)
+RUN npm install --production
+
+# Copier le code source dans l'image
+COPY . .
+
+# Étape 2: Exécution
+FROM node:16-alpine
+
+# Répertoire
+WORKDIR /app
+
+# Copier les fichiers nécessaires
+COPY --from=build /app /app
+
+# Exposer le port
+EXPOSE 3000
+
+# Lancer
+CMD ["node", "index.js"]
